@@ -5,9 +5,9 @@ import java.util.Scanner;
  */
 public class Sace {
     /**
-     * Greets the user, stores tasks, lists tasks, and exits when they enter {@code bye}.
+     * Greets the user, manages task completion, and exits when they enter {@code bye}.
      *
-     * @param args command-line arguments; not used in Level 2
+     * @param args command-line arguments; not used in Level 3
      */
     public static void main(String[] args) {
         String horizontalLine = "____________________________________________________________";
@@ -24,7 +24,7 @@ public class Sace {
         System.out.println(horizontalLine);
 
         Scanner scanner = new Scanner(System.in);
-        String[] tasks = new String[100];
+        Task[] tasks = new Task[100];
         int taskCount = 0;
         boolean isExit = false;
 
@@ -39,8 +39,22 @@ public class Sace {
                     System.out.println((i + 1) + ". " + tasks[i]);
                 }
                 System.out.println(horizontalLine);
+            } else if (command.startsWith("mark ")) {
+                int taskNumber = Integer.parseInt(command.substring("mark ".length()));
+                int taskIndex = taskNumber - 1;
+                tasks[taskIndex].markAsDone();
+                System.out.println("Nice! I've marked this task as done:");
+                System.out.println(tasks[taskIndex]);
+                System.out.println(horizontalLine);
+            } else if (command.startsWith("unmark ")) {
+                int taskNumber = Integer.parseInt(command.substring("unmark ".length()));
+                int taskIndex = taskNumber - 1;
+                tasks[taskIndex].markAsNotDone();
+                System.out.println("OK, I've marked this task as not done yet:");
+                System.out.println(tasks[taskIndex]);
+                System.out.println(horizontalLine);
             } else {
-                tasks[taskCount] = command;
+                tasks[taskCount] = new Task(command);
                 taskCount++;
                 System.out.println("added: " + command);
                 System.out.println(horizontalLine);
