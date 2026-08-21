@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -5,9 +6,9 @@ import java.util.Scanner;
  */
 public class Sace {
     /**
-     * Greets the user, manages tasks, handles invalid input, and exits on {@code bye}.
+     * Greets the user, manages and deletes tasks, and exits on {@code bye}.
      *
-     * @param args command-line arguments; not used in Level 5
+     * @param args command-line arguments; not used in Level 6
      */
     public static void main(String[] args) {
         String horizontalLine = "____________________________________________________________";
@@ -24,8 +25,7 @@ public class Sace {
         System.out.println(horizontalLine);
 
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
         boolean isExit = false;
 
         while (!isExit && scanner.hasNextLine()) {
@@ -38,28 +38,37 @@ public class Sace {
                 } else if (command.equals("bye")) {
                     isExit = true;
                 } else if (command.equals("list")) {
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println((i + 1) + ". " + tasks[i]);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + ". " + tasks.get(i));
                     }
                     System.out.println(horizontalLine);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    int taskIndex = parseTaskIndex(command, "mark", taskCount);
-                    tasks[taskIndex].markAsDone();
+                    int taskIndex = parseTaskIndex(command, "mark", tasks.size());
+                    tasks.get(taskIndex).markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
-                    System.out.println(tasks[taskIndex]);
+                    System.out.println(tasks.get(taskIndex));
                     System.out.println(horizontalLine);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    int taskIndex = parseTaskIndex(command, "unmark", taskCount);
-                    tasks[taskIndex].markAsNotDone();
+                    int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
+                    tasks.get(taskIndex).markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println(tasks[taskIndex]);
+                    System.out.println(tasks.get(taskIndex));
+                    System.out.println(horizontalLine);
+                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                    int taskIndex = parseTaskIndex(command, "delete", tasks.size());
+                    Task removedTask = tasks.remove(taskIndex);
+                    String taskWord = tasks.size() == 1 ? "task" : "tasks";
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + removedTask);
+                    System.out.println(
+                            "Now you have " + tasks.size() + " " + taskWord + " in the list.");
                     System.out.println(horizontalLine);
                 } else if (command.equals("todo") || command.startsWith("todo ")) {
-                    taskCount = addTask(tasks, taskCount, parseTodo(command), horizontalLine);
+                    addTask(tasks, parseTodo(command), horizontalLine);
                 } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                    taskCount = addTask(tasks, taskCount, parseDeadline(command), horizontalLine);
+                    addTask(tasks, parseDeadline(command), horizontalLine);
                 } else if (command.equals("event") || command.startsWith("event ")) {
-                    taskCount = addTask(tasks, taskCount, parseEvent(command), horizontalLine);
+                    addTask(tasks, parseEvent(command), horizontalLine);
                 } else {
                     throw new SaceException("I'm sorry, but I don't know what that means.");
                 }
@@ -75,10 +84,10 @@ public class Sace {
     }
 
     /**
-     * Converts the number in a mark or unmark command to a valid array index.
+     * Converts the number in a task operation command to a valid list index.
      *
      * @param command full command entered by the user
-     * @param action command word, either {@code mark} or {@code unmark}
+     * @param action command word, such as {@code mark}, {@code unmark}, or {@code delete}
      * @param taskCount current number of stored tasks
      * @return zero-based index of the selected task
      * @throws SaceException if the number is missing, invalid, or out of range
@@ -178,24 +187,16 @@ public class Sace {
     }
 
     /**
-     * Stores a task, displays confirmation, and returns the updated task count.
+     * Stores a task and displays confirmation.
      *
-     * @param tasks array used to store tasks
-     * @param taskCount current number of stored tasks
+     * @param tasks list used to store tasks
      * @param task task to add
      * @param horizontalLine line used to separate chatbot responses
-     * @return updated number of stored tasks
-     * @throws SaceException if the task array is full
      */
-    private static int addTask(Task[] tasks, int taskCount, Task task, String horizontalLine)
-            throws SaceException {
-        if (taskCount >= tasks.length) {
-            throw new SaceException("The task list is full.");
-        }
-        tasks[taskCount] = task;
-        int updatedTaskCount = taskCount + 1;
-        showAddedTask(task, updatedTaskCount, horizontalLine);
-        return updatedTaskCount;
+    private static void addTask(
+            ArrayList<Task> tasks, Task task, String horizontalLine) {
+        tasks.add(task);
+        showAddedTask(task, tasks.size(), horizontalLine);
     }
 
     /**
