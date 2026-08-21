@@ -5,9 +5,9 @@ import java.util.Scanner;
  */
 public class Sace {
     /**
-     * Greets the user, echoes their input, and exits when they enter {@code bye}.
+     * Greets the user, stores tasks, lists tasks, and exits when they enter {@code bye}.
      *
-     * @param args command-line arguments; not used in Level 1
+     * @param args command-line arguments; not used in Level 2
      */
     public static void main(String[] args) {
         String horizontalLine = "____________________________________________________________";
@@ -24,6 +24,8 @@ public class Sace {
         System.out.println(horizontalLine);
 
         Scanner scanner = new Scanner(System.in);
+        String[] tasks = new String[100];
+        int taskCount = 0;
         boolean isExit = false;
 
         while (!isExit && scanner.hasNextLine()) {
@@ -32,8 +34,15 @@ public class Sace {
 
             if (command.equals("bye")) {
                 isExit = true;
+            } else if (command.equals("list")) {
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println((i + 1) + ". " + tasks[i]);
+                }
+                System.out.println(horizontalLine);
             } else {
-                System.out.println(command);
+                tasks[taskCount] = command;
+                taskCount++;
+                System.out.println("added: " + command);
                 System.out.println(horizontalLine);
             }
         }
