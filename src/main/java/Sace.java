@@ -1,3 +1,4 @@
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -6,9 +7,9 @@ import java.util.Scanner;
  */
 public class Sace {
     /**
-     * Greets the user, manages and deletes tasks, and exits on {@code bye}.
+     * Loads saved tasks, manages the command loop, and exits on {@code bye}.
      *
-     * @param args command-line arguments; not used in Level 6
+     * @param args command-line arguments; not used in Level 7
      */
     public static void main(String[] args) {
         String horizontalLine = "____________________________________________________________";
@@ -24,8 +25,18 @@ public class Sace {
         System.out.println("What can I do for you?");
         System.out.println(horizontalLine);
 
+        Storage storage = new Storage(Path.of("data", "sace.txt"));
+        ArrayList<Task> tasks;
+        try {
+            tasks = storage.load();
+        } catch (SaceException e) {
+            System.out.println("OOPS!!! " + e.getMessage());
+            System.out.println("I'll start with an empty task list instead.");
+            System.out.println(horizontalLine);
+            tasks = new ArrayList<>();
+        }
+
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
         boolean isExit = false;
 
         while (!isExit && scanner.hasNextLine()) {
@@ -45,18 +56,21 @@ public class Sace {
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
                     int taskIndex = parseTaskIndex(command, "mark", tasks.size());
                     tasks.get(taskIndex).markAsDone();
+                    storage.save(tasks);
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println(tasks.get(taskIndex));
                     System.out.println(horizontalLine);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                     int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
+                    storage.save(tasks);
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println(tasks.get(taskIndex));
                     System.out.println(horizontalLine);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
                     int taskIndex = parseTaskIndex(command, "delete", tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
+                    storage.save(tasks);
                     String taskWord = tasks.size() == 1 ? "task" : "tasks";
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
@@ -64,11 +78,11 @@ public class Sace {
                             "Now you have " + tasks.size() + " " + taskWord + " in the list.");
                     System.out.println(horizontalLine);
                 } else if (command.equals("todo") || command.startsWith("todo ")) {
-                    addTask(tasks, parseTodo(command), horizontalLine);
+                    addTask(tasks, parseTodo(command), storage, horizontalLine);
                 } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                    addTask(tasks, parseDeadline(command), horizontalLine);
+                    addTask(tasks, parseDeadline(command), storage, horizontalLine);
                 } else if (command.equals("event") || command.startsWith("event ")) {
-                    addTask(tasks, parseEvent(command), horizontalLine);
+                    addTask(tasks, parseEvent(command), storage, horizontalLine);
                 } else {
                     throw new SaceException("I'm sorry, but I don't know what that means.");
                 }
@@ -191,11 +205,15 @@ public class Sace {
      *
      * @param tasks list used to store tasks
      * @param task task to add
+     * @param storage storage used to save the updated task list
      * @param horizontalLine line used to separate chatbot responses
+     * @throws SaceException if the updated task list cannot be saved
      */
     private static void addTask(
-            ArrayList<Task> tasks, Task task, String horizontalLine) {
+            ArrayList<Task> tasks, Task task, Storage storage, String horizontalLine)
+            throws SaceException {
         tasks.add(task);
+        storage.save(tasks);
         showAddedTask(task, tasks.size(), horizontalLine);
     }
 
