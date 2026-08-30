@@ -30,6 +30,24 @@ public class Task {
     }
 
     /**
+     * Returns the description of this task.
+     *
+     * @return task description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Returns whether this task has been completed.
+     *
+     * @return {@code true} if the task is completed
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
      * Returns {@code X} for a completed task and a blank for an incomplete task.
      *
      * @return status icon for this task
