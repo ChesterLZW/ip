@@ -12,11 +12,11 @@ public class Sace {
      */
     public static void main(String[] args) {
         String horizontalLine = "____________________________________________________________";
-        String banner = "  SSS    A    CCCC  EEEEE\n"
-                + " S      A A   C     E\n"
-                + "  SSS  AAAAA  C     EEE\n"
-                + "     S A   A  C     E\n"
-                + " SSSS  A   A  CCCC  EEEEE\n";
+        String banner = "  ____      _      ____   _____\n"
+                + " / ___|    / \\    / ___| | ____|\n"
+                + " \\___ \\   / _ \\  | |     |  _|\n"
+                + "  ___) | / ___ \\ | |___  | |___\n"
+                + " |____/ /_/   \\_\\ \\____| |_____|\n";
 
         System.out.println(horizontalLine);
         System.out.print(banner);
