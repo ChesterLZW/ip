@@ -7,7 +7,7 @@ public class SaceException extends Exception {
     /**
      * Creates an exception containing a user-friendly explanation.
      *
-     * @param message explanation of the invalid input
+     * @param message explanation of the invalid input.
      */
     public SaceException(String message) {
         super(message);

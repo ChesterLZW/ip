@@ -37,7 +37,7 @@ public class Ui {
     /**
      * Returns whether another command is available from standard input.
      *
-     * @return {@code true} when another command can be read
+     * @return {@code true} when another command can be read.
      */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
@@ -46,7 +46,7 @@ public class Ui {
     /**
      * Reads and trims the next command.
      *
-     * @return command entered by the user
+     * @return command entered by the user.
      */
     public String readCommand() {
         return scanner.nextLine().trim();
@@ -62,7 +62,7 @@ public class Ui {
     /**
      * Displays a storage error and explains that Sace will use an empty list.
      *
-     * @param message explanation of the loading error
+     * @param message explanation of the loading error.
      */
     public void showLoadingError(String message) {
         System.out.println("OOPS!!! " + message);
@@ -73,7 +73,7 @@ public class Ui {
     /**
      * Displays every task with a one-based task number.
      *
-     * @param tasks tasks to display
+     * @param tasks tasks to display.
      */
     public void showTaskList(TaskList tasks) {
         for (int i = 0; i < tasks.size(); i++) {
@@ -85,7 +85,7 @@ public class Ui {
     /**
      * Displays confirmation that a task was marked.
      *
-     * @param task marked task
+     * @param task marked task.
      */
     public void showMarkedTask(Task task) {
         System.out.println("Nice! I've marked this task as done:");
@@ -96,7 +96,7 @@ public class Ui {
     /**
      * Displays confirmation that a task was unmarked.
      *
-     * @param task unmarked task
+     * @param task unmarked task.
      */
     public void showUnmarkedTask(Task task) {
         System.out.println("OK, I've marked this task as not done yet:");
@@ -107,8 +107,8 @@ public class Ui {
     /**
      * Displays the removed task and the number of remaining tasks.
      *
-     * @param task removed task
-     * @param taskCount number of remaining tasks
+     * @param task removed task.
+     * @param taskCount number of remaining tasks.
      */
     public void showDeletedTask(Task task, int taskCount) {
         String taskWord = taskCount == 1 ? "task" : "tasks";
@@ -121,8 +121,8 @@ public class Ui {
     /**
      * Displays the added task and the number of stored tasks.
      *
-     * @param task added task
-     * @param taskCount number of stored tasks
+     * @param task added task.
+     * @param taskCount number of stored tasks.
      */
     public void showAddedTask(Task task, int taskCount) {
         String taskWord = taskCount == 1 ? "task" : "tasks";
@@ -135,7 +135,7 @@ public class Ui {
     /**
      * Displays a user-friendly error response.
      *
-     * @param message explanation of the error
+     * @param message explanation of the error.
      */
     public void showError(String message) {
         System.out.println("OOPS!!! " + message);

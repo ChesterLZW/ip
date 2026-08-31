@@ -10,7 +10,7 @@ public class Task {
     /**
      * Creates an incomplete task with the given description.
      *
-     * @param description description of the task
+     * @param description description of the task.
      */
     public Task(String description) {
         this.description = description;
@@ -34,7 +34,7 @@ public class Task {
     /**
      * Returns the description of this task.
      *
-     * @return task description
+     * @return task description.
      */
     public String getDescription() {
         return description;
@@ -43,7 +43,7 @@ public class Task {
     /**
      * Returns whether this task has been completed.
      *
-     * @return {@code true} if the task is completed
+     * @return {@code true} if the task is completed.
      */
     public boolean isDone() {
         return isDone;
@@ -52,7 +52,7 @@ public class Task {
     /**
      * Returns {@code X} for a completed task and a blank for an incomplete task.
      *
-     * @return status icon for this task
+     * @return status icon for this task.
      */
     private String getStatusIcon() {
         return isDone ? "X" : " ";
@@ -61,7 +61,7 @@ public class Task {
     /**
      * Returns the task in the format {@code [status] description}.
      *
-     * @return displayable representation of this task
+     * @return displayable representation of this task.
      */
     @Override
     public String toString() {
