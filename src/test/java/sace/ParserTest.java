@@ -6,9 +6,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Tests the conversion of user-supplied task numbers into list indexes.
+ * Tests command recognition and extraction of command arguments.
  */
 class ParserTest {
+    @Test
+    void parseCommandType_findCommand_returnsFindCommandType() throws SaceException {
+        assertEquals(Parser.CommandType.FIND, Parser.parseCommandType("find book"));
+    }
+
+    @Test
+    void parseFindKeyword_validCommand_returnsTrimmedKeyword() throws SaceException {
+        assertEquals("project meeting", Parser.parseFindKeyword("find   project meeting  "));
+    }
+
+    @Test
+    void parseFindKeyword_missingKeyword_throwsException() {
+        SaceException exception = assertThrows(
+                SaceException.class,
+                () -> Parser.parseFindKeyword("find"));
+
+        assertEquals("The search keyword cannot be empty.", exception.getMessage());
+    }
+
     @Test
     void parseTaskIndex_validTaskNumbers_returnsZeroBasedIndexes() throws SaceException {
         assertEquals(0, Parser.parseTaskIndex("mark 1", "mark", 3));

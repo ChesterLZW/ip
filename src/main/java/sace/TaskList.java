@@ -3,9 +3,10 @@ package sace;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
- * Owns the collection of tasks and provides operations that change it.
+ * Owns the collection of tasks and provides operations for accessing and changing it.
  */
 public class TaskList {
     private final ArrayList<Task> tasks;
@@ -86,6 +87,25 @@ public class TaskList {
         Task task = tasks.get(index);
         task.markAsNotDone();
         return task;
+    }
+
+    /**
+     * Returns tasks whose descriptions contain the given keyword, ignoring case.
+     *
+     * @param keyword keyword to search for.
+     * @return matching tasks in their original order.
+     */
+    public List<Task> find(String keyword) {
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+
+        for (Task task : tasks) {
+            String normalizedDescription = task.getDescription().toLowerCase(Locale.ROOT);
+            if (normalizedDescription.contains(normalizedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
     }
 
     /**

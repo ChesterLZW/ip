@@ -16,6 +16,7 @@ public class Parser {
         MARK,
         UNMARK,
         DELETE,
+        FIND,
         TODO,
         DEADLINE,
         EVENT
@@ -41,6 +42,8 @@ public class Parser {
             return CommandType.UNMARK;
         } else if (command.equals("delete") || command.startsWith("delete ")) {
             return CommandType.DELETE;
+        } else if (command.equals("find") || command.startsWith("find ")) {
+            return CommandType.FIND;
         } else if (command.equals("todo") || command.startsWith("todo ")) {
             return CommandType.TODO;
         } else if (command.equals("deadline") || command.startsWith("deadline ")) {
@@ -81,6 +84,21 @@ public class Parser {
             throw new SaceException("Choose a task number between 1 and " + taskCount + ".");
         }
         return taskNumber - 1;
+    }
+
+    /**
+     * Extracts the keyword from a find command.
+     *
+     * @param command full command entered by the user.
+     * @return keyword to search for in task descriptions.
+     * @throws SaceException if the keyword is missing.
+     */
+    public static String parseFindKeyword(String command) throws SaceException {
+        String keyword = command.substring("find".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new SaceException("The search keyword cannot be empty.");
+        }
+        return keyword;
     }
 
     /**
