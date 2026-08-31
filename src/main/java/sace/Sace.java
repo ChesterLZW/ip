@@ -13,7 +13,7 @@ public class Sace {
     /**
      * Creates Sace using the given file for task persistence.
      *
-     * @param filePath path of the task data file
+     * @param filePath path of the task data file.
      */
     public Sace(Path filePath) {
         storage = new Storage(filePath);
@@ -47,7 +47,7 @@ public class Sace {
     /**
      * Starts Sace with its default data file.
      *
-     * @param args command-line arguments; not used
+     * @param args command-line arguments; not used.
      */
     public static void main(String[] args) {
         new Sace(Path.of("data", "sace.txt")).run();
@@ -68,35 +68,37 @@ public class Sace {
     /**
      * Parses and carries out one user command.
      *
-     * @param command command entered by the user
-     * @return {@code true} if the command asks Sace to exit
-     * @throws SaceException if the command is invalid or tasks cannot be saved
+     * @param command command entered by the user.
+     * @return {@code true} if the command asks Sace to exit.
+     * @throws SaceException if the command is invalid or tasks cannot be saved.
      */
     private boolean executeCommand(String command) throws SaceException {
         Parser.CommandType commandType = Parser.parseCommandType(command);
 
         switch (commandType) {
-        case BYE:
-            return true;
-        case LIST:
-            ui.showTaskList(tasks);
-            break;
-        case MARK:
-            markTask(command);
-            break;
-        case UNMARK:
-            unmarkTask(command);
-            break;
-        case DELETE:
-            deleteTask(command);
-            break;
-        case TODO:
-        case DEADLINE:
-        case EVENT:
-            addTask(Parser.parseTask(command, commandType));
-            break;
-        default:
-            throw new SaceException("I'm sorry, but I don't know what that means.");
+            case BYE:
+                return true;
+            case LIST:
+                ui.showTaskList(tasks);
+                break;
+            case MARK:
+                markTask(command);
+                break;
+            case UNMARK:
+                unmarkTask(command);
+                break;
+            case DELETE:
+                deleteTask(command);
+                break;
+            case TODO:
+                // Fallthrough
+            case DEADLINE:
+                // Fallthrough
+            case EVENT:
+                addTask(Parser.parseTask(command, commandType));
+                break;
+            default:
+                throw new SaceException("I'm sorry, but I don't know what that means.");
         }
         return false;
     }

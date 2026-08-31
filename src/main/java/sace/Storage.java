@@ -20,7 +20,7 @@ public class Storage {
     /**
      * Creates storage that uses the given file.
      *
-     * @param filePath relative or absolute path of the task data file
+     * @param filePath relative or absolute path of the task data file.
      */
     public Storage(Path filePath) {
         this.filePath = filePath;
@@ -29,8 +29,8 @@ public class Storage {
     /**
      * Loads all saved tasks, or returns an empty list when the file does not exist yet.
      *
-     * @return tasks stored in the data file
-     * @throws SaceException if the file cannot be read or contains invalid data
+     * @return tasks stored in the data file.
+     * @throws SaceException if the file cannot be read or contains invalid data.
      */
     public ArrayList<Task> load() throws SaceException {
         ArrayList<Task> tasks = new ArrayList<>();
@@ -55,8 +55,8 @@ public class Storage {
     /**
      * Saves every task, creating the parent folder and data file when necessary.
      *
-     * @param tasks tasks to save
-     * @throws SaceException if the folder or file cannot be written
+     * @param tasks tasks to save.
+     * @throws SaceException if the folder or file cannot be written.
      */
     public void save(List<Task> tasks) throws SaceException {
         ArrayList<String> lines = new ArrayList<>();

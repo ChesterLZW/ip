@@ -24,9 +24,9 @@ public class Parser {
     /**
      * Identifies which supported command the user entered.
      *
-     * @param command full command entered by the user
-     * @return type of the command
-     * @throws SaceException if the command is blank or unknown
+     * @param command full command entered by the user.
+     * @return type of the command.
+     * @throws SaceException if the command is blank or unknown.
      */
     public static CommandType parseCommandType(String command) throws SaceException {
         if (command.isEmpty()) {
@@ -54,11 +54,11 @@ public class Parser {
     /**
      * Converts the number in a task operation command to a valid list index.
      *
-     * @param command full command entered by the user
-     * @param action command word, such as {@code mark}, {@code unmark}, or {@code delete}
-     * @param taskCount current number of stored tasks
-     * @return zero-based index of the selected task
-     * @throws SaceException if the number is missing, invalid, or out of range
+     * @param command full command entered by the user.
+     * @param action command word, such as {@code mark}, {@code unmark}, or {@code delete}.
+     * @param taskCount current number of stored tasks.
+     * @return zero-based index of the selected task.
+     * @throws SaceException if the number is missing, invalid, or out of range.
      */
     public static int parseTaskIndex(String command, String action, int taskCount)
             throws SaceException {
@@ -86,22 +86,22 @@ public class Parser {
     /**
      * Creates a task from an add command.
      *
-     * @param command full command entered by the user
-     * @param commandType type of task creation command
-     * @return task described by the command
-     * @throws SaceException if required task information is missing or invalid
+     * @param command full command entered by the user.
+     * @param commandType type of task creation command.
+     * @return task described by the command.
+     * @throws SaceException if required task information is missing or invalid.
      */
     public static Task parseTask(String command, CommandType commandType)
             throws SaceException {
         switch (commandType) {
-        case TODO:
-            return parseTodo(command);
-        case DEADLINE:
-            return parseDeadline(command);
-        case EVENT:
-            return parseEvent(command);
-        default:
-            throw new SaceException("This command does not create a task.");
+            case TODO:
+                return parseTodo(command);
+            case DEADLINE:
+                return parseDeadline(command);
+            case EVENT:
+                return parseEvent(command);
+            default:
+                throw new SaceException("This command does not create a task.");
         }
     }
 
