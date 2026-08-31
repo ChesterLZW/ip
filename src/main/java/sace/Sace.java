@@ -81,6 +81,9 @@ public class Sace {
             case LIST:
                 ui.showTaskList(tasks);
                 break;
+            case FIND:
+                findTasks(command);
+                break;
             case MARK:
                 markTask(command);
                 break;
@@ -101,6 +104,14 @@ public class Sace {
                 throw new SaceException("I'm sorry, but I don't know what that means.");
         }
         return false;
+    }
+
+    /**
+     * Finds and displays tasks whose descriptions match the requested keyword.
+     */
+    private void findTasks(String command) throws SaceException {
+        String keyword = Parser.parseFindKeyword(command);
+        ui.showMatchingTasks(tasks.find(keyword));
     }
 
     /**

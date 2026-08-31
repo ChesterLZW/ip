@@ -1,5 +1,6 @@
 package sace;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -78,6 +79,19 @@ public class Ui {
     public void showTaskList(TaskList tasks) {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + ". " + tasks.get(i));
+        }
+        System.out.println(HORIZONTAL_LINE);
+    }
+
+    /**
+     * Displays tasks that match a find command with one-based result numbers.
+     *
+     * @param matchingTasks matching tasks to display.
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        System.out.println("Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            System.out.println((i + 1) + ". " + matchingTasks.get(i));
         }
         System.out.println(HORIZONTAL_LINE);
     }
