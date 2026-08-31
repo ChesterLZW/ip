@@ -1,242 +1,147 @@
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
- * Runs Sace, a personal assistant chatbot.
+ * Coordinates the components of Sace, a personal assistant chatbot.
  */
 public class Sace {
+    private final Storage storage;
+    private final Ui ui;
+    private TaskList tasks;
+
     /**
-     * Loads saved tasks, manages the command loop, and exits on {@code bye}.
+     * Creates Sace using the given file for task persistence.
+     *
+     * @param filePath path of the task data file
+     */
+    public Sace(Path filePath) {
+        storage = new Storage(filePath);
+        ui = new Ui();
+        tasks = new TaskList();
+    }
+
+    /**
+     * Loads saved tasks and processes commands until the user exits.
+     */
+    public void run() {
+        ui.showWelcome();
+        loadTasks();
+
+        boolean isExit = false;
+        while (!isExit && ui.hasNextCommand()) {
+            String command = ui.readCommand();
+            ui.showDivider();
+
+            try {
+                isExit = executeCommand(command);
+            } catch (SaceException e) {
+                ui.showError(e.getMessage());
+            }
+        }
+
+        ui.showGoodbye();
+        ui.close();
+    }
+
+    /**
+     * Starts Sace with its default data file.
      *
      * @param args command-line arguments; not used
      */
     public static void main(String[] args) {
-        String horizontalLine = "____________________________________________________________";
-        String banner = "  ____      _      ____   _____\n"
-                + " / ___|    / \\    / ___| | ____|\n"
-                + " \\___ \\   / _ \\  | |     |  _|\n"
-                + "  ___) | / ___ \\ | |___  | |___\n"
-                + " |____/ /_/   \\_\\ \\____| |_____|\n";
+        new Sace(Path.of("data", "sace.txt")).run();
+    }
 
-        System.out.println(horizontalLine);
-        System.out.print(banner);
-        System.out.println("Hello! I'm Sace.");
-        System.out.println("What can I do for you?");
-        System.out.println(horizontalLine);
-
-        Storage storage = new Storage(Path.of("data", "sace.txt"));
-        ArrayList<Task> tasks;
+    /**
+     * Loads tasks from storage, falling back to an empty task list if loading fails.
+     */
+    private void loadTasks() {
         try {
-            tasks = storage.load();
+            tasks = new TaskList(storage.load());
         } catch (SaceException e) {
-            System.out.println("OOPS!!! " + e.getMessage());
-            System.out.println("I'll start with an empty task list instead.");
-            System.out.println(horizontalLine);
-            tasks = new ArrayList<>();
-        }
-
-        Scanner scanner = new Scanner(System.in);
-        boolean isExit = false;
-
-        while (!isExit && scanner.hasNextLine()) {
-            String command = scanner.nextLine().trim();
-            System.out.println(horizontalLine);
-
-            try {
-                if (command.isEmpty()) {
-                    throw new SaceException("Please enter a command.");
-                } else if (command.equals("bye")) {
-                    isExit = true;
-                } else if (command.equals("list")) {
-                    for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println((i + 1) + ". " + tasks.get(i));
-                    }
-                    System.out.println(horizontalLine);
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    int taskIndex = parseTaskIndex(command, "mark", tasks.size());
-                    tasks.get(taskIndex).markAsDone();
-                    storage.save(tasks);
-                    System.out.println("Nice! I've marked this task as done:");
-                    System.out.println(tasks.get(taskIndex));
-                    System.out.println(horizontalLine);
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
-                    tasks.get(taskIndex).markAsNotDone();
-                    storage.save(tasks);
-                    System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println(tasks.get(taskIndex));
-                    System.out.println(horizontalLine);
-                } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    int taskIndex = parseTaskIndex(command, "delete", tasks.size());
-                    Task removedTask = tasks.remove(taskIndex);
-                    storage.save(tasks);
-                    String taskWord = tasks.size() == 1 ? "task" : "tasks";
-                    System.out.println("Noted. I've removed this task:");
-                    System.out.println("  " + removedTask);
-                    System.out.println(
-                            "Now you have " + tasks.size() + " " + taskWord + " in the list.");
-                    System.out.println(horizontalLine);
-                } else if (command.equals("todo") || command.startsWith("todo ")) {
-                    addTask(tasks, parseTodo(command), storage, horizontalLine);
-                } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                    addTask(tasks, parseDeadline(command), storage, horizontalLine);
-                } else if (command.equals("event") || command.startsWith("event ")) {
-                    addTask(tasks, parseEvent(command), storage, horizontalLine);
-                } else {
-                    throw new SaceException("I'm sorry, but I don't know what that means.");
-                }
-            } catch (SaceException e) {
-                System.out.println("OOPS!!! " + e.getMessage());
-                System.out.println(horizontalLine);
-            }
-        }
-
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(horizontalLine);
-        scanner.close();
-    }
-
-    /**
-     * Converts the number in a task operation command to a valid list index.
-     *
-     * @param command full command entered by the user
-     * @param action command word, such as {@code mark}, {@code unmark}, or {@code delete}
-     * @param taskCount current number of stored tasks
-     * @return zero-based index of the selected task
-     * @throws SaceException if the number is missing, invalid, or out of range
-     */
-    private static int parseTaskIndex(String command, String action, int taskCount)
-            throws SaceException {
-        String numberText = command.substring(action.length()).trim();
-        if (numberText.isEmpty()) {
-            throw new SaceException("Please provide a task number after " + action + ".");
-        }
-
-        int taskNumber;
-        try {
-            taskNumber = Integer.parseInt(numberText);
-        } catch (NumberFormatException e) {
-            throw new SaceException("The task number for " + action + " must be a whole number.");
-        }
-
-        if (taskCount == 0) {
-            throw new SaceException("There are no tasks to " + action + ".");
-        }
-        if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new SaceException("Choose a task number between 1 and " + taskCount + ".");
-        }
-        return taskNumber - 1;
-    }
-
-    /**
-     * Creates a todo from a validated command.
-     *
-     * @param command full todo command
-     * @return parsed todo
-     * @throws SaceException if the description is empty
-     */
-    private static Todo parseTodo(String command) throws SaceException {
-        String description = command.substring("todo".length()).trim();
-        if (description.isEmpty()) {
-            throw new SaceException("The description of a todo cannot be empty.");
-        }
-        return new Todo(description);
-    }
-
-    /**
-     * Creates a deadline from a validated command.
-     *
-     * @param command full deadline command
-     * @return parsed deadline
-     * @throws SaceException if required information is missing
-     */
-    private static Deadline parseDeadline(String command) throws SaceException {
-        int byMarkerIndex = command.indexOf(" /by ");
-        if (byMarkerIndex < 0) {
-            throw new SaceException(
-                    "Use this format: deadline DESCRIPTION /by DATE_OR_TIME.");
-        }
-
-        String description = command.substring("deadline".length(), byMarkerIndex).trim();
-        String by = command.substring(byMarkerIndex + " /by ".length()).trim();
-        if (description.isEmpty()) {
-            throw new SaceException("The description of a deadline cannot be empty.");
-        }
-        if (by.isEmpty()) {
-            throw new SaceException("The due date of a deadline cannot be empty.");
-        }
-
-        try {
-            return new Deadline(description, LocalDate.parse(by));
-        } catch (DateTimeParseException e) {
-            throw new SaceException(
-                    "Use a real date in yyyy-MM-dd format, for example 2026-08-31.");
+            ui.showLoadingError(e.getMessage());
+            tasks = new TaskList();
         }
     }
 
     /**
-     * Creates an event from a validated command.
+     * Parses and carries out one user command.
      *
-     * @param command full event command
-     * @return parsed event
-     * @throws SaceException if required information is missing or out of order
+     * @param command command entered by the user
+     * @return {@code true} if the command asks Sace to exit
+     * @throws SaceException if the command is invalid or tasks cannot be saved
      */
-    private static Event parseEvent(String command) throws SaceException {
-        int fromMarkerIndex = command.indexOf(" /from ");
-        int toMarkerIndex = command.indexOf(" /to ");
-        if (fromMarkerIndex < 0 || toMarkerIndex < 0 || toMarkerIndex <= fromMarkerIndex) {
-            throw new SaceException(
-                    "Use this format: event DESCRIPTION /from START /to END.");
-        }
+    private boolean executeCommand(String command) throws SaceException {
+        Parser.CommandType commandType = Parser.parseCommandType(command);
 
-        String description = command.substring("event".length(), fromMarkerIndex).trim();
-        String from = command.substring(
-                fromMarkerIndex + " /from ".length(), toMarkerIndex).trim();
-        String to = command.substring(toMarkerIndex + " /to ".length()).trim();
-        if (description.isEmpty()) {
-            throw new SaceException("The description of an event cannot be empty.");
+        switch (commandType) {
+        case BYE:
+            return true;
+        case LIST:
+            ui.showTaskList(tasks);
+            break;
+        case MARK:
+            markTask(command);
+            break;
+        case UNMARK:
+            unmarkTask(command);
+            break;
+        case DELETE:
+            deleteTask(command);
+            break;
+        case TODO:
+        case DEADLINE:
+        case EVENT:
+            addTask(Parser.parseTask(command, commandType));
+            break;
+        default:
+            throw new SaceException("I'm sorry, but I don't know what that means.");
         }
-        if (from.isEmpty()) {
-            throw new SaceException("The start of an event cannot be empty.");
-        }
-        if (to.isEmpty()) {
-            throw new SaceException("The end of an event cannot be empty.");
-        }
-        return new Event(description, from, to);
+        return false;
     }
 
     /**
-     * Stores a task and displays confirmation.
-     *
-     * @param tasks list used to store tasks
-     * @param task task to add
-     * @param storage storage used to save the updated task list
-     * @param horizontalLine line used to separate chatbot responses
-     * @throws SaceException if the updated task list cannot be saved
+     * Marks the task selected by a mark command and saves the updated list.
      */
-    private static void addTask(
-            ArrayList<Task> tasks, Task task, Storage storage, String horizontalLine)
-            throws SaceException {
+    private void markTask(String command) throws SaceException {
+        int taskIndex = Parser.parseTaskIndex(command, "mark", tasks.size());
+        Task task = tasks.mark(taskIndex);
+        saveTasks();
+        ui.showMarkedTask(task);
+    }
+
+    /**
+     * Unmarks the task selected by an unmark command and saves the updated list.
+     */
+    private void unmarkTask(String command) throws SaceException {
+        int taskIndex = Parser.parseTaskIndex(command, "unmark", tasks.size());
+        Task task = tasks.unmark(taskIndex);
+        saveTasks();
+        ui.showUnmarkedTask(task);
+    }
+
+    /**
+     * Deletes the task selected by a delete command and saves the updated list.
+     */
+    private void deleteTask(String command) throws SaceException {
+        int taskIndex = Parser.parseTaskIndex(command, "delete", tasks.size());
+        Task removedTask = tasks.delete(taskIndex);
+        saveTasks();
+        ui.showDeletedTask(removedTask, tasks.size());
+    }
+
+    /**
+     * Adds a parsed task, saves the updated list, and displays confirmation.
+     */
+    private void addTask(Task task) throws SaceException {
         tasks.add(task);
-        storage.save(tasks);
-        showAddedTask(task, tasks.size(), horizontalLine);
+        saveTasks();
+        ui.showAddedTask(task, tasks.size());
     }
 
     /**
-     * Displays confirmation that a task was added and reports the current task count.
-     *
-     * @param task task that was added
-     * @param taskCount current number of stored tasks
-     * @param horizontalLine line used to separate chatbot responses
+     * Saves the current task list.
      */
-    private static void showAddedTask(Task task, int taskCount, String horizontalLine) {
-        String taskWord = taskCount == 1 ? "task" : "tasks";
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " " + taskWord + " in the list.");
-        System.out.println(horizontalLine);
+    private void saveTasks() throws SaceException {
+        storage.save(tasks.asList());
     }
 }
