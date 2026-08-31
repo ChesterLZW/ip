@@ -1,3 +1,5 @@
+package sace;
+
 /**
  * Represents an invalid command or task operation entered by the user.
  */

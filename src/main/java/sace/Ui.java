@@ -1,3 +1,5 @@
+package sace;
+
 import java.util.Scanner;
 
 /**
