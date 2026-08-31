@@ -1,4 +1,6 @@
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,7 +11,7 @@ public class Sace {
     /**
      * Loads saved tasks, manages the command loop, and exits on {@code bye}.
      *
-     * @param args command-line arguments; not used in Level 7
+     * @param args command-line arguments; not used
      */
     public static void main(String[] args) {
         String horizontalLine = "____________________________________________________________";
@@ -164,9 +166,15 @@ public class Sace {
             throw new SaceException("The description of a deadline cannot be empty.");
         }
         if (by.isEmpty()) {
-            throw new SaceException("The due date or time of a deadline cannot be empty.");
+            throw new SaceException("The due date of a deadline cannot be empty.");
         }
-        return new Deadline(description, by);
+
+        try {
+            return new Deadline(description, LocalDate.parse(by));
+        } catch (DateTimeParseException e) {
+            throw new SaceException(
+                    "Use a real date in yyyy-MM-dd format, for example 2026-08-31.");
+        }
     }
 
     /**

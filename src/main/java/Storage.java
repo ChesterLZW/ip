@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +85,7 @@ public class Storage {
         } else if (task instanceof Deadline deadline) {
             return String.join(
                     FIELD_SEPARATOR, "D", completionValue,
-                    escapeField(task.getDescription()), escapeField(deadline.getBy()));
+                    escapeField(task.getDescription()), deadline.getBy().toString());
         } else if (task instanceof Event event) {
             return String.join(
                     FIELD_SEPARATOR, "E", completionValue,
@@ -117,9 +119,13 @@ public class Storage {
         if (type.equals("T") && fields.size() == 3) {
             task = new Todo(requireValue(fields.get(2), lineNumber));
         } else if (type.equals("D") && fields.size() == 4) {
-            task = new Deadline(
-                    requireValue(fields.get(2), lineNumber),
-                    requireValue(fields.get(3), lineNumber));
+            String description = requireValue(fields.get(2), lineNumber);
+            String dateText = requireValue(fields.get(3), lineNumber);
+            try {
+                task = new Deadline(description, LocalDate.parse(dateText));
+            } catch (DateTimeParseException e) {
+                throw corruptedDataException(lineNumber);
+            }
         } else if (type.equals("E") && fields.size() == 5) {
             task = new Event(
                     requireValue(fields.get(2), lineNumber),
