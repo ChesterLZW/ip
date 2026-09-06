@@ -21,9 +21,8 @@ class ParserTest {
 
     @Test
     void parseFindKeyword_missingKeyword_throwsException() {
-        SaceException exception = assertThrows(
-                SaceException.class,
-                () -> Parser.parseFindKeyword("find"));
+        SaceException exception = assertThrows(SaceException.class, () ->
+                Parser.parseFindKeyword("find"));
 
         assertEquals("The search keyword cannot be empty.", exception.getMessage());
     }
@@ -37,18 +36,16 @@ class ParserTest {
 
     @Test
     void parseTaskIndex_missingTaskNumber_throwsException() {
-        SaceException exception = assertThrows(
-                SaceException.class,
-                () -> Parser.parseTaskIndex("mark", "mark", 3));
+        SaceException exception = assertThrows(SaceException.class, () ->
+                Parser.parseTaskIndex("mark", "mark", 3));
 
         assertEquals("Please provide a task number after mark.", exception.getMessage());
     }
 
     @Test
     void parseTaskIndex_nonNumericTaskNumber_throwsException() {
-        SaceException exception = assertThrows(
-                SaceException.class,
-                () -> Parser.parseTaskIndex("delete two", "delete", 3));
+        SaceException exception = assertThrows(SaceException.class, () ->
+                Parser.parseTaskIndex("delete two", "delete", 3));
 
         assertEquals(
                 "The task number for delete must be a whole number.",
@@ -57,21 +54,18 @@ class ParserTest {
 
     @Test
     void parseTaskIndex_emptyTaskList_throwsException() {
-        SaceException exception = assertThrows(
-                SaceException.class,
-                () -> Parser.parseTaskIndex("unmark 1", "unmark", 0));
+        SaceException exception = assertThrows(SaceException.class, () ->
+                Parser.parseTaskIndex("unmark 1", "unmark", 0));
 
         assertEquals("There are no tasks to unmark.", exception.getMessage());
     }
 
     @Test
     void parseTaskIndex_outOfRangeTaskNumbers_throwsException() {
-        SaceException belowRangeException = assertThrows(
-                SaceException.class,
-                () -> Parser.parseTaskIndex("mark 0", "mark", 3));
-        SaceException aboveRangeException = assertThrows(
-                SaceException.class,
-                () -> Parser.parseTaskIndex("mark 4", "mark", 3));
+        SaceException belowRangeException = assertThrows(SaceException.class, () ->
+                Parser.parseTaskIndex("mark 0", "mark", 3));
+        SaceException aboveRangeException = assertThrows(SaceException.class, () ->
+                Parser.parseTaskIndex("mark 4", "mark", 3));
 
         assertEquals(
                 "Choose a task number between 1 and 3.",
