@@ -1,6 +1,7 @@
 package sace;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -12,6 +13,13 @@ import org.junit.jupiter.api.Test;
  * Tests task-list operations that select tasks without changing the stored list.
  */
 class TaskListTest {
+    @Test
+    void mark_invalidIndex_violatesDocumentedAssumption() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> tasks.mark(1));
+    }
+
     @Test
     void find_keywordWithDifferentCase_returnsMatchingTasksInOriginalOrder() {
         Task firstMatch = new Todo("Read Book");

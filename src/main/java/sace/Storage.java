@@ -81,6 +81,7 @@ public class Storage {
      * Converts a task to the text format used in the data file.
      */
     private static String serializeTask(Task task) throws SaceException {
+        assert task != null : "Stored task lists must not contain null values";
         String completionValue = task.isDone() ? "1" : "0";
         if (task instanceof Todo) {
             return String.join(
