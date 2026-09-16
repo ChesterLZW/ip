@@ -10,6 +10,11 @@ import org.junit.jupiter.api.Test;
  */
 class ParserTest {
     @Test
+    void parseCommandType_helpCommand_returnsHelpCommandType() throws SaceException {
+        assertEquals(Parser.CommandType.HELP, Parser.parseCommandType("help"));
+    }
+
+    @Test
     void parseCommandType_findCommand_returnsFindCommandType() throws SaceException {
         assertEquals(Parser.CommandType.FIND, Parser.parseCommandType("find book"));
     }
