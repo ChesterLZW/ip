@@ -113,6 +113,11 @@ public class Parser {
      */
     public static Task parseTask(String command, CommandType commandType)
             throws SaceException {
+        assert commandType == CommandType.TODO
+                || commandType == CommandType.DEADLINE
+                || commandType == CommandType.EVENT
+                : "parseTask requires a task-creation command";
+
         switch (commandType) {
             case TODO:
                 return parseTodo(command);

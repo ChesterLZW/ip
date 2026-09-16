@@ -43,6 +43,7 @@ public class TaskList {
      * @return selected task.
      */
     public Task get(int index) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
         return tasks.get(index);
     }
 
@@ -62,6 +63,7 @@ public class TaskList {
      * @return removed task.
      */
     public Task delete(int index) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
         return tasks.remove(index);
     }
 
@@ -72,6 +74,7 @@ public class TaskList {
      * @return marked task.
      */
     public Task mark(int index) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
         Task task = tasks.get(index);
         task.markAsDone();
         return task;
@@ -84,6 +87,7 @@ public class TaskList {
      * @return unmarked task.
      */
     public Task unmark(int index) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
         Task task = tasks.get(index);
         task.markAsNotDone();
         return task;
@@ -115,5 +119,12 @@ public class TaskList {
      */
     public List<Task> asList() {
         return Collections.unmodifiableList(tasks);
+    }
+
+    /**
+     * Returns whether an index identifies a task currently in the list.
+     */
+    private boolean isValidIndex(int index) {
+        return index >= 0 && index < tasks.size();
     }
 }
