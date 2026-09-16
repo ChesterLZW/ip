@@ -24,7 +24,9 @@ class ParserTest {
         SaceException exception = assertThrows(SaceException.class, () ->
                 Parser.parseFindKeyword("find"));
 
-        assertEquals("The search keyword cannot be empty.", exception.getMessage());
+        assertEquals(
+                "The scouts need a keyword to begin their search.",
+                exception.getMessage());
     }
 
     @Test
@@ -39,7 +41,7 @@ class ParserTest {
         SaceException exception = assertThrows(SaceException.class, () ->
                 Parser.parseTaskIndex("mark", "mark", 3));
 
-        assertEquals("Please provide a task number after mark.", exception.getMessage());
+        assertEquals("Name a quest number after mark.", exception.getMessage());
     }
 
     @Test
@@ -48,7 +50,7 @@ class ParserTest {
                 Parser.parseTaskIndex("delete two", "delete", 3));
 
         assertEquals(
-                "The task number for delete must be a whole number.",
+                "The quest number for delete must be a whole number.",
                 exception.getMessage());
     }
 
@@ -57,7 +59,9 @@ class ParserTest {
         SaceException exception = assertThrows(SaceException.class, () ->
                 Parser.parseTaskIndex("unmark 1", "unmark", 0));
 
-        assertEquals("There are no tasks to unmark.", exception.getMessage());
+        assertEquals(
+                "Your quest log is empty; there is nothing to unmark.",
+                exception.getMessage());
     }
 
     @Test
@@ -68,10 +72,10 @@ class ParserTest {
                 Parser.parseTaskIndex("mark 4", "mark", 3));
 
         assertEquals(
-                "Choose a task number between 1 and 3.",
+                "Choose a quest number between 1 and 3.",
                 belowRangeException.getMessage());
         assertEquals(
-                "Choose a task number between 1 and 3.",
+                "Choose a quest number between 1 and 3.",
                 aboveRangeException.getMessage());
     }
 }

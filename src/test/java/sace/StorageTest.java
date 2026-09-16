@@ -74,6 +74,6 @@ class StorageTest {
 
         SaceException exception = assertThrows(SaceException.class, storage::load);
 
-        assertEquals("The data file is corrupted at line 1.", exception.getMessage());
+        assertEquals("The royal archive is damaged at line 1.", exception.getMessage());
     }
 }

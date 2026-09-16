@@ -27,8 +27,6 @@ public class DialogBox extends HBox {
     @FXML
     private Label speakerName;
     @FXML
-    private Label userInitials;
-    @FXML
     private ImageView displayPicture;
     @FXML
     private StackPane avatarFrame;
@@ -58,10 +56,11 @@ public class DialogBox extends HBox {
      * Creates a right-aligned dialog for a command entered by the user.
      *
      * @param text user's command.
+     * @param image portrait displayed beside the command.
      * @return configured user dialog.
      */
-    public static DialogBox getUserDialog(String text) {
-        DialogBox dialogBox = new DialogBox(text, null, true);
+    public static DialogBox getUserDialog(String text, Image image) {
+        DialogBox dialogBox = new DialogBox(text, image, true);
         dialogBox.flip();
         return dialogBox;
     }
@@ -81,15 +80,12 @@ public class DialogBox extends HBox {
      * Selects the correct avatar, label, and color treatment for a speaker.
      */
     private void configureSpeaker(Image image, boolean isUser) {
+        displayPicture.setImage(image);
         if (isUser) {
-            displayPicture.setVisible(false);
-            userInitials.setVisible(true);
             speakerName.setText("YOU");
             avatarFrame.getStyleClass().add("user-avatar");
             bubbleContainer.getStyleClass().add("user-bubble");
         } else {
-            displayPicture.setImage(image);
-            userInitials.setVisible(false);
             speakerName.setText("SACE  -  MOONLIT ORACLE");
             avatarFrame.getStyleClass().add("bot-avatar");
             bubbleContainer.getStyleClass().add("bot-bubble");

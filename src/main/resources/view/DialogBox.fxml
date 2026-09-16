@@ -9,29 +9,28 @@
 <?import javafx.scene.shape.Circle?>
 
 <fx:root alignment="TOP_LEFT" maxWidth="1.7976931348623157E308"
-         spacing="13.0" styleClass="dialog-row"
+         spacing="18.0" styleClass="dialog-row"
          type="javafx.scene.layout.HBox"
          xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <StackPane fx:id="avatarFrame" maxHeight="66.0" maxWidth="66.0"
-                   minHeight="66.0" minWidth="66.0"
-                   prefHeight="66.0" prefWidth="66.0"
+        <StackPane fx:id="avatarFrame" maxHeight="104.0" maxWidth="104.0"
+                   minHeight="104.0" minWidth="104.0"
+                   prefHeight="104.0" prefWidth="104.0"
                    styleClass="avatar-frame">
             <children>
-                <ImageView fx:id="displayPicture" fitHeight="60.0" fitWidth="60.0"
+                <ImageView fx:id="displayPicture" fitHeight="96.0" fitWidth="96.0"
                            pickOnBounds="true" preserveRatio="true">
                     <clip>
-                        <Circle centerX="30.0" centerY="30.0" radius="30.0" />
+                        <Circle centerX="48.0" centerY="48.0" radius="48.0" />
                     </clip>
                 </ImageView>
-                <Label fx:id="userInitials" styleClass="user-initials" text="YOU" />
             </children>
         </StackPane>
-        <VBox fx:id="bubbleContainer" maxWidth="590.0" spacing="6.0"
+        <VBox fx:id="bubbleContainer" maxWidth="760.0" spacing="8.0"
               styleClass="dialog-bubble">
             <padding>
-                <Insets bottom="14.0" left="17.0" right="17.0" top="12.0" />
+                <Insets bottom="18.0" left="22.0" right="22.0" top="16.0" />
             </padding>
             <children>
                 <Label fx:id="speakerName" styleClass="speaker-name" text="SPEAKER" />
