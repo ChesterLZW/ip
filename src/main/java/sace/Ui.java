@@ -1,6 +1,5 @@
 package sace;
 
-import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -27,11 +26,10 @@ public class Ui {
     /**
      * Displays Sace's banner and greeting.
      */
-    public void showWelcome() {
+    public void showWelcome(String welcomeMessage) {
         System.out.println(HORIZONTAL_LINE);
         System.out.print(BANNER);
-        System.out.println("Hello! I'm Sace.");
-        System.out.println("What can I do for you?");
+        System.out.println(welcomeMessage);
         System.out.println(HORIZONTAL_LINE);
     }
 
@@ -61,106 +59,12 @@ public class Ui {
     }
 
     /**
-     * Displays a storage error and explains that Sace will use an empty list.
+     * Displays a response followed by the standard divider.
      *
-     * @param message explanation of the loading error.
+     * @param response response to display.
      */
-    public void showLoadingError(String message) {
-        System.out.println("OOPS!!! " + message);
-        System.out.println("I'll start with an empty task list instead.");
-        System.out.println(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Displays every task with a one-based task number.
-     *
-     * @param tasks tasks to display.
-     */
-    public void showTaskList(TaskList tasks) {
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
-        }
-        System.out.println(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Displays tasks that match a find command with one-based result numbers.
-     *
-     * @param matchingTasks matching tasks to display.
-     */
-    public void showMatchingTasks(List<Task> matchingTasks) {
-        System.out.println("Here are the matching tasks in your list:");
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            System.out.println((i + 1) + ". " + matchingTasks.get(i));
-        }
-        System.out.println(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Displays confirmation that a task was marked.
-     *
-     * @param task marked task.
-     */
-    public void showMarkedTask(Task task) {
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println(task);
-        System.out.println(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Displays confirmation that a task was unmarked.
-     *
-     * @param task unmarked task.
-     */
-    public void showUnmarkedTask(Task task) {
-        System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println(task);
-        System.out.println(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Displays the removed task and the number of remaining tasks.
-     *
-     * @param task removed task.
-     * @param taskCount number of remaining tasks.
-     */
-    public void showDeletedTask(Task task, int taskCount) {
-        String taskWord = taskCount == 1 ? "task" : "tasks";
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " " + taskWord + " in the list.");
-        System.out.println(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Displays the added task and the number of stored tasks.
-     *
-     * @param task added task.
-     * @param taskCount number of stored tasks.
-     */
-    public void showAddedTask(Task task, int taskCount) {
-        String taskWord = taskCount == 1 ? "task" : "tasks";
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " " + taskWord + " in the list.");
-        System.out.println(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Displays a user-friendly error response.
-     *
-     * @param message explanation of the error.
-     */
-    public void showError(String message) {
-        System.out.println("OOPS!!! " + message);
-        System.out.println(HORIZONTAL_LINE);
-    }
-
-    /**
-     * Displays Sace's goodbye message.
-     */
-    public void showGoodbye() {
-        System.out.println("Bye. Hope to see you again soon!");
+    public void showResponse(String response) {
+        System.out.println(response);
         System.out.println(HORIZONTAL_LINE);
     }
 
