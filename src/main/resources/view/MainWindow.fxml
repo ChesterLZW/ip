@@ -62,6 +62,7 @@
                 <HBox alignment="CENTER_LEFT" spacing="8.0">
                     <children>
                         <Label styleClass="hint-label" text="COMMANDS" />
+                        <Label styleClass="command-chip" text="help" />
                         <Label styleClass="command-chip" text="list" />
                         <Label styleClass="command-chip" text="todo" />
                         <Label styleClass="command-chip" text="deadline" />

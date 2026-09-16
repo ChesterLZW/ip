@@ -16,6 +16,18 @@ class SaceTest {
     Path tempDir;
 
     @Test
+    void getResponse_help_returnsBattleManualWithoutEndingSession() {
+        Sace sace = new Sace(tempDir.resolve("sace.txt"));
+
+        String response = sace.getResponse("help");
+
+        assertTrue(response.startsWith("THE BATTLE MANUAL"));
+        assertTrue(response.contains("deadline DESCRIPTION /by yyyy-MM-dd"));
+        assertTrue(response.contains("event DESCRIPTION /from START /to END"));
+        assertFalse(sace.isExitRequested());
+    }
+
+    @Test
     void getResponse_addThenList_returnsSavedTask() {
         Sace sace = new Sace(tempDir.resolve("sace.txt"));
 

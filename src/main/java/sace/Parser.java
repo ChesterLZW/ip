@@ -12,6 +12,7 @@ public class Parser {
      */
     public enum CommandType {
         BYE,
+        HELP,
         LIST,
         MARK,
         UNMARK,
@@ -34,6 +35,8 @@ public class Parser {
             throw new SaceException("Your command scroll is blank. Enter an order.");
         } else if (command.equals("bye")) {
             return CommandType.BYE;
+        } else if (command.equals("help")) {
+            return CommandType.HELP;
         } else if (command.equals("list")) {
             return CommandType.LIST;
         } else if (command.equals("mark") || command.startsWith("mark ")) {

@@ -9,10 +9,21 @@ import java.util.List;
 public class Sace {
     private static final Path DEFAULT_DATA_PATH = Path.of("data", "sace.txt");
     private static final String WELCOME_MESSAGE = "Welcome, Summoner. I'm Sace, your moonlit strategist.\n"
-            + "The quest log awaits your command.";
+            + "The quest log awaits your command. Enter help to open the battle manual.";
     private static final String GOODBYE_MESSAGE = "The battle rests for now, Summoner.\n"
             + "May honor and victory follow your path.";
     private static final String ERROR_PREFIX = "The battle plan needs correction:\n";
+    private static final String HELP_MESSAGE = "THE BATTLE MANUAL\n"
+            + "help - open this battle manual\n"
+            + "list - review your current quests\n"
+            + "todo DESCRIPTION - enlist a new quest\n"
+            + "deadline DESCRIPTION /by yyyy-MM-dd - set a dated quest\n"
+            + "event DESCRIPTION /from START /to END - schedule an event\n"
+            + "find KEYWORD - scout for matching quests\n"
+            + "mark NUMBER - declare a quest complete\n"
+            + "unmark NUMBER - return a quest to the battle plan\n"
+            + "delete NUMBER - withdraw a quest\n"
+            + "bye - end the current campaign";
 
     private final Storage storage;
     private TaskList tasks;
@@ -130,6 +141,8 @@ public class Sace {
             case BYE:
                 isExitRequested = true;
                 return GOODBYE_MESSAGE;
+            case HELP:
+                return HELP_MESSAGE;
             case LIST:
                 return formatTasks("Your current battle plan:", tasks.asList());
             case FIND:
