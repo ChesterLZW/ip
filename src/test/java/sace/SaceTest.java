@@ -32,7 +32,7 @@ class SaceTest {
 
         String response = sace.getResponse("dance");
 
-        assertTrue(response.startsWith("OOPS!!!"));
+        assertTrue(response.startsWith("The battle plan needs correction:"));
         assertFalse(sace.isExitRequested());
     }
 
@@ -42,7 +42,7 @@ class SaceTest {
 
         String response = sace.getResponse("bye");
 
-        assertTrue(response.contains("Until next time"));
+        assertTrue(response.contains("The battle rests for now"));
         assertTrue(sace.isExitRequested());
     }
 }

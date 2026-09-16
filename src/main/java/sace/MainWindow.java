@@ -15,7 +15,8 @@ import javafx.scene.layout.VBox;
  * Controls the main chat window and passes user commands to Sace.
  */
 public class MainWindow {
-    private static final String BOT_AVATAR_PATH = "/images/arli-flawless-avatar.png";
+    private static final String BOT_AVATAR_PATH = "/images/jing.jpeg";
+    private static final String USER_AVATAR_PATH = "/images/consortyu.jpeg";
 
     @FXML
     private ScrollPane scrollPane;
@@ -28,7 +29,8 @@ public class MainWindow {
     @FXML
     private Label statusLabel;
 
-    private final Image botImage = loadBotImage();
+    private final Image botImage = loadImage(BOT_AVATAR_PATH);
+    private final Image userImage = loadImage(USER_AVATAR_PATH);
     private Sace sace;
 
     /**
@@ -64,7 +66,7 @@ public class MainWindow {
 
         String response = sace.getResponse(input);
         dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input),
+                DialogBox.getUserDialog(input, userImage),
                 DialogBox.getBotDialog(response, botImage));
         userInput.clear();
 
@@ -76,11 +78,11 @@ public class MainWindow {
     }
 
     /**
-     * Loads the bot portrait from the application resources.
+     * Loads a portrait from the application resources.
      */
-    private static Image loadBotImage() {
+    private static Image loadImage(String imagePath) {
         URL imageResource = Objects.requireNonNull(
-                MainWindow.class.getResource(BOT_AVATAR_PATH), "Bot avatar is missing");
+                MainWindow.class.getResource(imagePath), "Avatar is missing: " + imagePath);
         return new Image(imageResource.toExternalForm());
     }
 }

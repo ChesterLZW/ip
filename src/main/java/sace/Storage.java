@@ -47,7 +47,8 @@ public class Storage {
                 }
             }
         } catch (IOException e) {
-            throw new SaceException("I could not load tasks from " + filePath + ".");
+            throw new SaceException(
+                    "The royal archive could not load quests from " + filePath + ".");
         }
         return tasks;
     }
@@ -71,7 +72,8 @@ public class Storage {
             }
             Files.write(filePath, lines, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new SaceException("I could not save tasks to " + filePath + ".");
+            throw new SaceException(
+                    "The royal archive could not save quests to " + filePath + ".");
         }
     }
 
@@ -94,7 +96,7 @@ public class Storage {
                     escapeField(task.getDescription()), escapeField(event.getFrom()),
                     escapeField(event.getTo()));
         }
-        throw new SaceException("I could not save an unknown task type.");
+        throw new SaceException("The royal archive cannot preserve an unknown quest type.");
     }
 
     /**
@@ -206,6 +208,6 @@ public class Storage {
      * Creates a consistent error for a malformed saved line.
      */
     private static SaceException corruptedDataException(int lineNumber) {
-        return new SaceException("The data file is corrupted at line " + lineNumber + ".");
+        return new SaceException("The royal archive is damaged at line " + lineNumber + ".");
     }
 }

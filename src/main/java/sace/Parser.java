@@ -31,7 +31,7 @@ public class Parser {
      */
     public static CommandType parseCommandType(String command) throws SaceException {
         if (command.isEmpty()) {
-            throw new SaceException("Please enter a command.");
+            throw new SaceException("Your command scroll is blank. Enter an order.");
         } else if (command.equals("bye")) {
             return CommandType.BYE;
         } else if (command.equals("list")) {
@@ -51,7 +51,7 @@ public class Parser {
         } else if (command.equals("event") || command.startsWith("event ")) {
             return CommandType.EVENT;
         }
-        throw new SaceException("I'm sorry, but I don't know what that means.");
+        throw new SaceException("That order is not recorded in the battle manual.");
     }
 
     /**
@@ -67,21 +67,23 @@ public class Parser {
             throws SaceException {
         String numberText = command.substring(action.length()).trim();
         if (numberText.isEmpty()) {
-            throw new SaceException("Please provide a task number after " + action + ".");
+            throw new SaceException("Name a quest number after " + action + ".");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
-            throw new SaceException("The task number for " + action + " must be a whole number.");
+            throw new SaceException(
+                    "The quest number for " + action + " must be a whole number.");
         }
 
         if (taskCount == 0) {
-            throw new SaceException("There are no tasks to " + action + ".");
+            throw new SaceException(
+                    "Your quest log is empty; there is nothing to " + action + ".");
         }
         if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new SaceException("Choose a task number between 1 and " + taskCount + ".");
+            throw new SaceException("Choose a quest number between 1 and " + taskCount + ".");
         }
         return taskNumber - 1;
     }
@@ -96,7 +98,7 @@ public class Parser {
     public static String parseFindKeyword(String command) throws SaceException {
         String keyword = command.substring("find".length()).trim();
         if (keyword.isEmpty()) {
-            throw new SaceException("The search keyword cannot be empty.");
+            throw new SaceException("The scouts need a keyword to begin their search.");
         }
         return keyword;
     }
@@ -119,7 +121,7 @@ public class Parser {
             case EVENT:
                 return parseEvent(command);
             default:
-                throw new SaceException("This command does not create a task.");
+                throw new SaceException("That order does not create a quest.");
         }
     }
 
@@ -129,7 +131,7 @@ public class Parser {
     private static Todo parseTodo(String command) throws SaceException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
-            throw new SaceException("The description of a todo cannot be empty.");
+            throw new SaceException("Every quest needs a description after todo.");
         }
         return new Todo(description);
     }
@@ -141,23 +143,23 @@ public class Parser {
         int byMarkerIndex = command.indexOf(" /by ");
         if (byMarkerIndex < 0) {
             throw new SaceException(
-                    "Use this format: deadline DESCRIPTION /by DATE_OR_TIME.");
+                    "Use this formation: deadline DESCRIPTION /by yyyy-MM-dd.");
         }
 
         String description = command.substring("deadline".length(), byMarkerIndex).trim();
         String by = command.substring(byMarkerIndex + " /by ".length()).trim();
         if (description.isEmpty()) {
-            throw new SaceException("The description of a deadline cannot be empty.");
+            throw new SaceException("Every deadline quest needs a description.");
         }
         if (by.isEmpty()) {
-            throw new SaceException("The due date of a deadline cannot be empty.");
+            throw new SaceException("A deadline needs a battle date after /by.");
         }
 
         try {
             return new Deadline(description, LocalDate.parse(by));
         } catch (DateTimeParseException e) {
             throw new SaceException(
-                    "Use a real date in yyyy-MM-dd format, for example 2026-08-31.");
+                    "Use a valid battle date in yyyy-MM-dd format, for example 2026-08-31.");
         }
     }
 
@@ -169,7 +171,7 @@ public class Parser {
         int toMarkerIndex = command.indexOf(" /to ");
         if (fromMarkerIndex < 0 || toMarkerIndex < 0 || toMarkerIndex <= fromMarkerIndex) {
             throw new SaceException(
-                    "Use this format: event DESCRIPTION /from START /to END.");
+                    "Use this formation: event DESCRIPTION /from START /to END.");
         }
 
         String description = command.substring("event".length(), fromMarkerIndex).trim();
@@ -177,13 +179,13 @@ public class Parser {
                 fromMarkerIndex + " /from ".length(), toMarkerIndex).trim();
         String to = command.substring(toMarkerIndex + " /to ".length()).trim();
         if (description.isEmpty()) {
-            throw new SaceException("The description of an event cannot be empty.");
+            throw new SaceException("Every event quest needs a description.");
         }
         if (from.isEmpty()) {
-            throw new SaceException("The start of an event cannot be empty.");
+            throw new SaceException("An event needs a starting time after /from.");
         }
         if (to.isEmpty()) {
-            throw new SaceException("The end of an event cannot be empty.");
+            throw new SaceException("An event needs an ending time after /to.");
         }
         return new Event(description, from, to);
     }

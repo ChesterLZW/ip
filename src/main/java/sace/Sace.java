@@ -8,9 +8,11 @@ import java.util.List;
  */
 public class Sace {
     private static final Path DEFAULT_DATA_PATH = Path.of("data", "sace.txt");
-    private static final String WELCOME_MESSAGE = "Hello! I'm Sace.\n"
-            + "Your moonlit task oracle is ready. What can I do for you?";
-    private static final String GOODBYE_MESSAGE = "Until next time. May your path be flawless!";
+    private static final String WELCOME_MESSAGE = "Welcome, Summoner. I'm Sace, your moonlit strategist.\n"
+            + "The quest log awaits your command.";
+    private static final String GOODBYE_MESSAGE = "The battle rests for now, Summoner.\n"
+            + "May honor and victory follow your path.";
+    private static final String ERROR_PREFIX = "The battle plan needs correction:\n";
 
     private final Storage storage;
     private final Ui ui;
@@ -80,7 +82,7 @@ public class Sace {
         try {
             return executeCommand(normalizedCommand);
         } catch (SaceException e) {
-            return "OOPS!!! " + e.getMessage();
+            return ERROR_PREFIX + e.getMessage();
         }
     }
 
@@ -110,8 +112,8 @@ public class Sace {
             tasks = new TaskList(storage.load());
         } catch (SaceException e) {
             tasks = new TaskList();
-            loadingWarning = "OOPS!!! " + e.getMessage()
-                    + "\nI'll start with an empty task list instead.";
+            loadingWarning = "The royal archive is in disarray.\n" + e.getMessage()
+                    + "\nA fresh quest log has been prepared.";
         }
     }
 
@@ -130,7 +132,7 @@ public class Sace {
                 isExitRequested = true;
                 return GOODBYE_MESSAGE;
             case LIST:
-                return formatTasks("Here are the tasks in your quest log:", tasks.asList());
+                return formatTasks("Your current battle plan:", tasks.asList());
             case FIND:
                 return findTasks(command);
             case MARK:
@@ -146,7 +148,7 @@ public class Sace {
             case EVENT:
                 return addTask(Parser.parseTask(command, commandType));
             default:
-                throw new SaceException("I'm sorry, but I don't know what that means.");
+                throw new SaceException("That order is not recorded in the battle manual.");
         }
     }
 
@@ -155,7 +157,7 @@ public class Sace {
      */
     private String findTasks(String command) throws SaceException {
         String keyword = Parser.parseFindKeyword(command);
-        return formatTasks("Here are the matching tasks in your quest log:",
+        return formatTasks("The scouts found these matching quests:",
                 tasks.find(keyword));
     }
 
@@ -166,7 +168,7 @@ public class Sace {
         int taskIndex = Parser.parseTaskIndex(command, "mark", tasks.size());
         Task task = tasks.mark(taskIndex);
         saveTasks();
-        return "Nice! I've marked this task as done:\n  " + task;
+        return "Victory secured. This quest is complete:\n  " + task;
     }
 
     /**
@@ -176,7 +178,7 @@ public class Sace {
         int taskIndex = Parser.parseTaskIndex(command, "unmark", tasks.size());
         Task task = tasks.unmark(taskIndex);
         saveTasks();
-        return "OK, I've marked this task as not done yet:\n  " + task;
+        return "This quest returns to the battle plan:\n  " + task;
     }
 
     /**
@@ -186,7 +188,7 @@ public class Sace {
         int taskIndex = Parser.parseTaskIndex(command, "delete", tasks.size());
         Task removedTask = tasks.delete(taskIndex);
         saveTasks();
-        return "Noted. I've removed this task:\n  " + removedTask + "\n"
+        return "Order withdrawn. This quest has been removed:\n  " + removedTask + "\n"
                 + formatTaskCount(tasks.size());
     }
 
@@ -196,7 +198,7 @@ public class Sace {
     private String addTask(Task task) throws SaceException {
         tasks.add(task);
         saveTasks();
-        return "Got it. I've added this task:\n  " + task + "\n"
+        return "Order received. This quest joins your battle plan:\n  " + task + "\n"
                 + formatTaskCount(tasks.size());
     }
 
@@ -213,7 +215,7 @@ public class Sace {
     private static String formatTasks(String heading, List<Task> taskList) {
         StringBuilder response = new StringBuilder(heading);
         if (taskList.isEmpty()) {
-            return response.append("\n  No tasks found.").toString();
+            return response.append("\n  No quests await you here.").toString();
         }
 
         for (int i = 0; i < taskList.size(); i++) {
@@ -229,7 +231,7 @@ public class Sace {
      * Formats the number of tasks remaining in the list.
      */
     private static String formatTaskCount(int taskCount) {
-        String taskWord = taskCount == 1 ? "task" : "tasks";
-        return "Now you have " + taskCount + " " + taskWord + " in the list.";
+        String questWord = taskCount == 1 ? "quest" : "quests";
+        return "Your battle plan now holds " + taskCount + " " + questWord + ".";
     }
 }
