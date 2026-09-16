@@ -108,41 +108,60 @@ public class Storage {
             throw corruptedDataException(lineNumber);
         }
 
-        String type = fields.get(0);
-        String completionValue = fields.get(1);
-        boolean isDone;
-        if (completionValue.equals("1")) {
-            isDone = true;
-        } else if (completionValue.equals("0")) {
-            isDone = false;
-        } else {
-            throw corruptedDataException(lineNumber);
-        }
-
-        Task task;
-        if (type.equals("T") && fields.size() == 3) {
-            task = new Todo(requireValue(fields.get(2), lineNumber));
-        } else if (type.equals("D") && fields.size() == 4) {
-            String description = requireValue(fields.get(2), lineNumber);
-            String dateText = requireValue(fields.get(3), lineNumber);
-            try {
-                task = new Deadline(description, LocalDate.parse(dateText));
-            } catch (DateTimeParseException e) {
-                throw corruptedDataException(lineNumber);
-            }
-        } else if (type.equals("E") && fields.size() == 5) {
-            task = new Event(
-                    requireValue(fields.get(2), lineNumber),
-                    requireValue(fields.get(3), lineNumber),
-                    requireValue(fields.get(4), lineNumber));
-        } else {
-            throw corruptedDataException(lineNumber);
-        }
-
+        boolean isDone = parseCompletionStatus(fields.get(1), lineNumber);
+        Task task = createTask(fields, lineNumber);
         if (isDone) {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Converts the stored completion flag into a boolean value.
+     */
+    private static boolean parseCompletionStatus(String completionValue, int lineNumber)
+            throws SaceException {
+        if (completionValue.equals("1")) {
+            return true;
+        }
+        if (completionValue.equals("0")) {
+            return false;
+        }
+        throw corruptedDataException(lineNumber);
+    }
+
+    /**
+     * Recreates the task subtype described by a set of stored fields.
+     */
+    private static Task createTask(List<String> fields, int lineNumber) throws SaceException {
+        String type = fields.get(0);
+        if (type.equals("T") && fields.size() == 3) {
+            return new Todo(requireValue(fields.get(2), lineNumber));
+        }
+        if (type.equals("D") && fields.size() == 4) {
+            return createDeadline(fields, lineNumber);
+        }
+        if (type.equals("E") && fields.size() == 5) {
+            return new Event(
+                    requireValue(fields.get(2), lineNumber),
+                    requireValue(fields.get(3), lineNumber),
+                    requireValue(fields.get(4), lineNumber));
+        }
+        throw corruptedDataException(lineNumber);
+    }
+
+    /**
+     * Recreates a deadline while translating an invalid stored date into a data error.
+     */
+    private static Deadline createDeadline(List<String> fields, int lineNumber)
+            throws SaceException {
+        String description = requireValue(fields.get(2), lineNumber);
+        String dateText = requireValue(fields.get(3), lineNumber);
+        try {
+            return new Deadline(description, LocalDate.parse(dateText));
+        } catch (DateTimeParseException e) {
+            throw corruptedDataException(lineNumber);
+        }
     }
 
     /**
