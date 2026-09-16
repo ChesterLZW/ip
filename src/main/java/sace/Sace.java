@@ -15,7 +15,6 @@ public class Sace {
     private static final String ERROR_PREFIX = "The battle plan needs correction:\n";
 
     private final Storage storage;
-    private final Ui ui;
     private TaskList tasks;
     private String loadingWarning;
     private boolean isExitRequested;
@@ -34,7 +33,6 @@ public class Sace {
      */
     public Sace(Path filePath) {
         storage = new Storage(filePath);
-        ui = new Ui();
         tasks = new TaskList();
         loadingWarning = "";
         loadTasks();
@@ -44,6 +42,7 @@ public class Sace {
      * Loads saved tasks and processes commands until the user exits.
      */
     public void run() {
+        Ui ui = new Ui();
         ui.showWelcome(getWelcomeMessage());
 
         while (!isExitRequested && ui.hasNextCommand()) {
