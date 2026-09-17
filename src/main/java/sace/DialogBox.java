@@ -77,6 +77,20 @@ public class DialogBox extends HBox {
     }
 
     /**
+     * Creates a visually prominent dialog for a command error.
+     *
+     * @param text Sace's explanation of the command error.
+     * @param image portrait displayed beside the response.
+     * @return configured error dialog.
+     */
+    public static DialogBox getErrorDialog(String text, Image image) {
+        DialogBox dialogBox = new DialogBox(text, image, false);
+        dialogBox.speakerName.setText("SACE  -  COMMAND ALERT");
+        dialogBox.bubbleContainer.getStyleClass().add("error-bubble");
+        return dialogBox;
+    }
+
+    /**
      * Selects the correct avatar, label, and color treatment for a speaker.
      */
     private void configureSpeaker(Image image, boolean isUser) {

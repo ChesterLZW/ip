@@ -14,15 +14,15 @@
          xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <StackPane fx:id="avatarFrame" maxHeight="104.0" maxWidth="104.0"
-                   minHeight="104.0" minWidth="104.0"
-                   prefHeight="104.0" prefWidth="104.0"
+        <StackPane fx:id="avatarFrame" maxHeight="76.0" maxWidth="76.0"
+                   minHeight="76.0" minWidth="76.0"
+                   prefHeight="76.0" prefWidth="76.0"
                    styleClass="avatar-frame">
             <children>
-                <ImageView fx:id="displayPicture" fitHeight="96.0" fitWidth="96.0"
+                <ImageView fx:id="displayPicture" fitHeight="68.0" fitWidth="68.0"
                            pickOnBounds="true" preserveRatio="true">
                     <clip>
-                        <Circle centerX="48.0" centerY="48.0" radius="48.0" />
+                        <Circle centerX="34.0" centerY="34.0" radius="34.0" />
                     </clip>
                 </ImageView>
             </children>

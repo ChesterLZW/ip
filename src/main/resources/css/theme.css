@@ -125,6 +125,20 @@
     -fx-border-radius: 17 6 17 17;
 }
 
+.error-bubble {
+    -fx-background-color: linear-gradient(to bottom right, rgba(91, 35, 50, 0.98), rgba(57, 25, 48, 0.98));
+    -fx-border-color: rgba(255, 139, 139, 0.78);
+    -fx-effect: dropshadow(gaussian, rgba(180, 47, 69, 0.34), 18, 0.22, 0, 5);
+}
+
+.error-bubble .speaker-name {
+    -fx-text-fill: #ffb1b1;
+}
+
+.error-bubble .dialog-text {
+    -fx-text-fill: #ffe7e7;
+}
+
 .speaker-name {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
@@ -207,4 +221,10 @@
 .send-button:disabled,
 .command-input:disabled {
     -fx-opacity: 0.48;
+}
+
+.status-pill.error-status {
+    -fx-background-color: rgba(190, 62, 79, 0.18);
+    -fx-border-color: rgba(255, 139, 139, 0.52);
+    -fx-text-fill: #ffb1b1;
 }

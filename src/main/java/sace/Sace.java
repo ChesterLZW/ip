@@ -29,6 +29,7 @@ public class Sace {
     private TaskList tasks;
     private String loadingWarning;
     private boolean isExitRequested;
+    private boolean didLastCommandFail;
 
     /**
      * Creates Sace using its default data file.
@@ -88,12 +89,23 @@ public class Sace {
      */
     public String getResponse(String command) {
         isExitRequested = false;
+        didLastCommandFail = false;
         String normalizedCommand = command == null ? "" : command.trim();
         try {
             return executeCommand(normalizedCommand);
         } catch (SaceException e) {
+            didLastCommandFail = true;
             return ERROR_PREFIX + e.getMessage();
         }
+    }
+
+    /**
+     * Returns whether the most recently processed command produced an error response.
+     *
+     * @return {@code true} when the last command could not be carried out.
+     */
+    public boolean didLastCommandFail() {
+        return didLastCommandFail;
     }
 
     /**

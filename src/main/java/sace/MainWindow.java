@@ -65,10 +65,21 @@ public class MainWindow {
         }
 
         String response = sace.getResponse(input);
+        DialogBox responseDialog = sace.didLastCommandFail()
+                ? DialogBox.getErrorDialog(response, botImage)
+                : DialogBox.getBotDialog(response, botImage);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getBotDialog(response, botImage));
+                responseDialog);
         userInput.clear();
+
+        statusLabel.getStyleClass().remove("error-status");
+        if (sace.didLastCommandFail()) {
+            statusLabel.setText("COMMAND NEEDS REVISION");
+            statusLabel.getStyleClass().add("error-status");
+        } else {
+            statusLabel.setText("ORACLE ONLINE");
+        }
 
         if (sace.isExitRequested()) {
             userInput.setDisable(true);
