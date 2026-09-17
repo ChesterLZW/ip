@@ -29,7 +29,7 @@
                         <VBox spacing="1.0">
                             <children>
                                 <Label styleClass="title" text="SACE" />
-                                <Label styleClass="subtitle" text="THE MOONLIT TASK ORACLE" />
+                                <Label styleClass="subtitle" text="YOUR MOONLIT STRATEGIST" />
                             </children>
                         </VBox>
                         <Region HBox.hgrow="ALWAYS" />

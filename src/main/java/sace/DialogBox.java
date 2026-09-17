@@ -100,7 +100,7 @@ public class DialogBox extends HBox {
             avatarFrame.getStyleClass().add("user-avatar");
             bubbleContainer.getStyleClass().add("user-bubble");
         } else {
-            speakerName.setText("SACE  -  MOONLIT ORACLE");
+            speakerName.setText("SACE  -  MOONLIT STRATEGIST");
             avatarFrame.getStyleClass().add("bot-avatar");
             bubbleContainer.getStyleClass().add("bot-bubble");
         }

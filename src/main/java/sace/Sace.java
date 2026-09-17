@@ -9,11 +9,12 @@ import java.util.List;
 public class Sace {
     private static final Path DEFAULT_DATA_PATH = Path.of("data", "sace.txt");
     private static final String WELCOME_MESSAGE = "Welcome, Summoner. I'm Sace, your moonlit strategist.\n"
-            + "The quest log awaits your command. Enter help to open the battle manual.";
+            + "Your quests are written beneath the stars. Enter help to open the battle manual.";
     private static final String GOODBYE_MESSAGE = "The battle rests for now, Summoner.\n"
             + "May honor and victory follow your path.";
     private static final String ERROR_PREFIX = "The battle plan needs correction:\n";
     private static final String HELP_MESSAGE = "THE BATTLE MANUAL\n"
+            + "Sace's field guide to commanding the moonlit ledger\n\n"
             + "help - open this battle manual\n"
             + "list - review your current quests\n"
             + "todo DESCRIPTION - enlist a new quest\n"
@@ -156,7 +157,7 @@ public class Sace {
             case HELP:
                 return HELP_MESSAGE;
             case LIST:
-                return formatTasks("Your current battle plan:", tasks.asList());
+                return formatTasks("The moonlit ledger records these quests:", tasks.asList());
             case FIND:
                 return findTasks(command);
             case MARK:
@@ -181,7 +182,7 @@ public class Sace {
      */
     private String findTasks(String command) throws SaceException {
         String keyword = Parser.parseFindKeyword(command);
-        return formatTasks("The scouts found these matching quests:",
+        return formatTasks("My moonlit scouts found these matching quests:",
                 tasks.find(keyword));
     }
 
@@ -192,7 +193,7 @@ public class Sace {
         int taskIndex = Parser.parseTaskIndex(command, "mark", tasks.size());
         Task task = tasks.mark(taskIndex);
         saveTasks();
-        return "Victory secured. This quest is complete:\n  " + task;
+        return "Victory secured beneath the moon. This quest is complete:\n  " + task;
     }
 
     /**
@@ -202,7 +203,7 @@ public class Sace {
         int taskIndex = Parser.parseTaskIndex(command, "unmark", tasks.size());
         Task task = tasks.unmark(taskIndex);
         saveTasks();
-        return "This quest returns to the battle plan:\n  " + task;
+        return "The moon marks this quest active once more:\n  " + task;
     }
 
     /**
@@ -212,7 +213,7 @@ public class Sace {
         int taskIndex = Parser.parseTaskIndex(command, "delete", tasks.size());
         Task removedTask = tasks.delete(taskIndex);
         saveTasks();
-        return "Order withdrawn. This quest has been removed:\n  " + removedTask + "\n"
+        return "The moonlit ledger releases this quest:\n  " + removedTask + "\n"
                 + formatTaskCount(tasks.size());
     }
 
@@ -222,7 +223,7 @@ public class Sace {
     private String addTask(Task task) throws SaceException {
         tasks.add(task);
         saveTasks();
-        return "Order received. This quest joins your battle plan:\n  " + task + "\n"
+        return "The stars have recorded this new quest:\n  " + task + "\n"
                 + formatTaskCount(tasks.size());
     }
 
@@ -256,6 +257,6 @@ public class Sace {
      */
     private static String formatTaskCount(int taskCount) {
         String questWord = taskCount == 1 ? "quest" : "quests";
-        return "Your battle plan now holds " + taskCount + " " + questWord + ".";
+        return "The moonlit ledger now holds " + taskCount + " " + questWord + ".";
     }
 }
