@@ -191,8 +191,16 @@ public class Sace {
      */
     private String markTask(String command) throws SaceException {
         int taskIndex = Parser.parseTaskIndex(command, "mark", tasks.size());
+        boolean wasDone = tasks.get(taskIndex).isDone();
         Task task = tasks.mark(taskIndex);
-        saveTasks();
+        try {
+            saveTasks();
+        } catch (SaceException e) {
+            if (!wasDone) {
+                task.markAsNotDone();
+            }
+            throw e;
+        }
         return "Victory secured beneath the moon. This quest is complete:\n  " + task;
     }
 
@@ -201,8 +209,16 @@ public class Sace {
      */
     private String unmarkTask(String command) throws SaceException {
         int taskIndex = Parser.parseTaskIndex(command, "unmark", tasks.size());
+        boolean wasDone = tasks.get(taskIndex).isDone();
         Task task = tasks.unmark(taskIndex);
-        saveTasks();
+        try {
+            saveTasks();
+        } catch (SaceException e) {
+            if (wasDone) {
+                task.markAsDone();
+            }
+            throw e;
+        }
         return "The moon marks this quest active once more:\n  " + task;
     }
 
@@ -212,7 +228,12 @@ public class Sace {
     private String deleteTask(String command) throws SaceException {
         int taskIndex = Parser.parseTaskIndex(command, "delete", tasks.size());
         Task removedTask = tasks.delete(taskIndex);
-        saveTasks();
+        try {
+            saveTasks();
+        } catch (SaceException e) {
+            tasks.insert(taskIndex, removedTask);
+            throw e;
+        }
         return "The moonlit ledger releases this quest:\n  " + removedTask + "\n"
                 + formatTaskCount(tasks.size());
     }
@@ -222,7 +243,12 @@ public class Sace {
      */
     private String addTask(Task task) throws SaceException {
         tasks.add(task);
-        saveTasks();
+        try {
+            saveTasks();
+        } catch (SaceException e) {
+            tasks.delete(tasks.size() - 1);
+            throw e;
+        }
         return "The stars have recorded this new quest:\n  " + task + "\n"
                 + formatTaskCount(tasks.size());
     }

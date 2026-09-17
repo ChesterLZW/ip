@@ -1,7 +1,10 @@
 package sace;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +20,57 @@ class ParserTest {
     @Test
     void parseCommandType_findCommand_returnsFindCommandType() throws SaceException {
         assertEquals(Parser.CommandType.FIND, Parser.parseCommandType("find book"));
+    }
+
+    @Test
+    void parseCommandType_mixedCaseCommandWithTab_returnsMatchingCommandType()
+            throws SaceException {
+        assertEquals(
+                Parser.CommandType.DEADLINE,
+                Parser.parseCommandType("DeAdLiNe\tsubmit report"));
+    }
+
+    @Test
+    void parseTask_deadlineWithFlexibleSpacing_returnsDeadline() throws SaceException {
+        Task task = Parser.parseTask(
+                "DEADLINE submit report   /BY   2026-09-30",
+                Parser.CommandType.DEADLINE);
+
+        Deadline deadline = assertInstanceOf(Deadline.class, task);
+        assertEquals("submit report", deadline.getDescription());
+        assertEquals(LocalDate.of(2026, 9, 30), deadline.getBy());
+    }
+
+    @Test
+    void parseTask_deadlineWithDuplicateBy_throwsException() {
+        SaceException exception = assertThrows(SaceException.class, () ->
+                Parser.parseTask(
+                        "deadline report /by 2026-09-30 /by 2026-10-01",
+                        Parser.CommandType.DEADLINE));
+
+        assertEquals("A deadline accepts only one /by parameter.", exception.getMessage());
+    }
+
+    @Test
+    void parseTask_eventWithDuplicateTo_throwsException() {
+        SaceException exception = assertThrows(SaceException.class, () ->
+                Parser.parseTask(
+                        "event meeting /from Monday /to Tuesday /to Wednesday",
+                        Parser.CommandType.EVENT));
+
+        assertEquals("An event accepts only one /to parameter.", exception.getMessage());
+    }
+
+    @Test
+    void parseTask_eventWithSameStartAndEnd_throwsException() {
+        SaceException exception = assertThrows(SaceException.class, () ->
+                Parser.parseTask(
+                        "event meeting /from Monday 2pm /to monday 2PM",
+                        Parser.CommandType.EVENT));
+
+        assertEquals(
+                "An event must have different start and end times.",
+                exception.getMessage());
     }
 
     @Test

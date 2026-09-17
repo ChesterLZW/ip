@@ -2,8 +2,10 @@ package sace;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -65,15 +67,47 @@ public class Storage {
             lines.add(serializeTask(task));
         }
 
+        Path temporaryFile = null;
         try {
-            Path parentFolder = filePath.getParent();
-            if (parentFolder != null) {
-                Files.createDirectories(parentFolder);
-            }
-            Files.write(filePath, lines, StandardCharsets.UTF_8);
+            Path absoluteFilePath = filePath.toAbsolutePath();
+            Path parentFolder = absoluteFilePath.getParent();
+            assert parentFolder != null : "An absolute data path must have a parent folder";
+            Files.createDirectories(parentFolder);
+            temporaryFile = Files.createTempFile(parentFolder, ".sace-", ".tmp");
+            Files.write(temporaryFile, lines, StandardCharsets.UTF_8);
+            replaceDataFile(temporaryFile, absoluteFilePath);
         } catch (IOException e) {
             throw new SaceException(
                     "The royal archive could not save quests to " + filePath + ".");
+        } finally {
+            deleteTemporaryFile(temporaryFile);
+        }
+    }
+
+    /**
+     * Replaces the data file atomically when the file system supports it.
+     */
+    private static void replaceDataFile(Path temporaryFile, Path targetFile)
+            throws IOException {
+        try {
+            Files.move(temporaryFile, targetFile,
+                    StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } catch (AtomicMoveNotSupportedException e) {
+            Files.move(temporaryFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    /**
+     * Removes a leftover temporary file after an unsuccessful save.
+     */
+    private static void deleteTemporaryFile(Path temporaryFile) {
+        if (temporaryFile == null) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(temporaryFile);
+        } catch (IOException ignored) {
+            // A failed cleanup must not hide the original save error from the user.
         }
     }
 

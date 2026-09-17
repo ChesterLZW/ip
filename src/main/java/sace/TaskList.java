@@ -57,6 +57,18 @@ public class TaskList {
     }
 
     /**
+     * Inserts a task at a specific position when a failed operation must be rolled back.
+     *
+     * @param index zero-based insertion position.
+     * @param task task to insert.
+     */
+    public void insert(int index, Task task) {
+        assert index >= 0 && index <= tasks.size()
+                : "Task insertion index must be within the list bounds";
+        tasks.add(index, task);
+    }
+
+    /**
      * Removes and returns the task at the given zero-based index.
      *
      * @param index zero-based task index.

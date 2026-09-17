@@ -2,11 +2,21 @@ package sace;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Interprets user commands and converts their arguments into task data.
  */
 public class Parser {
+    private static final Pattern DEADLINE_BY_MARKER =
+            Pattern.compile("(?i)(?:^|\\s)/by(?=\\s|$)");
+    private static final Pattern EVENT_FROM_MARKER =
+            Pattern.compile("(?i)(?:^|\\s)/from(?=\\s|$)");
+    private static final Pattern EVENT_TO_MARKER =
+            Pattern.compile("(?i)(?:^|\\s)/to(?=\\s|$)");
+
     /**
      * Identifies the supported kinds of user commands.
      */
@@ -31,27 +41,33 @@ public class Parser {
      * @throws SaceException if the command is blank or unknown.
      */
     public static CommandType parseCommandType(String command) throws SaceException {
-        if (command.isEmpty()) {
+        String trimmedCommand = command.trim();
+        if (trimmedCommand.isEmpty()) {
             throw new SaceException("Your command scroll is blank. Enter an order.");
-        } else if (command.equals("bye")) {
+        }
+
+        String[] commandParts = trimmedCommand.split("\\s+", 2);
+        String commandWord = commandParts[0].toLowerCase(Locale.ROOT);
+        boolean hasArguments = commandParts.length == 2;
+        if (commandWord.equals("bye") && !hasArguments) {
             return CommandType.BYE;
-        } else if (command.equals("help")) {
+        } else if (commandWord.equals("help") && !hasArguments) {
             return CommandType.HELP;
-        } else if (command.equals("list")) {
+        } else if (commandWord.equals("list") && !hasArguments) {
             return CommandType.LIST;
-        } else if (command.equals("mark") || command.startsWith("mark ")) {
+        } else if (commandWord.equals("mark")) {
             return CommandType.MARK;
-        } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+        } else if (commandWord.equals("unmark")) {
             return CommandType.UNMARK;
-        } else if (command.equals("delete") || command.startsWith("delete ")) {
+        } else if (commandWord.equals("delete")) {
             return CommandType.DELETE;
-        } else if (command.equals("find") || command.startsWith("find ")) {
+        } else if (commandWord.equals("find")) {
             return CommandType.FIND;
-        } else if (command.equals("todo") || command.startsWith("todo ")) {
+        } else if (commandWord.equals("todo")) {
             return CommandType.TODO;
-        } else if (command.equals("deadline") || command.startsWith("deadline ")) {
+        } else if (commandWord.equals("deadline")) {
             return CommandType.DEADLINE;
-        } else if (command.equals("event") || command.startsWith("event ")) {
+        } else if (commandWord.equals("event")) {
             return CommandType.EVENT;
         }
         throw new SaceException("That order is not recorded in the battle manual.");
@@ -148,14 +164,20 @@ public class Parser {
      * Creates a deadline from a validated command.
      */
     private static Deadline parseDeadline(String command) throws SaceException {
-        int byMarkerIndex = command.indexOf(" /by ");
-        if (byMarkerIndex < 0) {
+        Matcher byMarker = DEADLINE_BY_MARKER.matcher(command);
+        if (!byMarker.find()) {
             throw new SaceException(
                     "Use this formation: deadline DESCRIPTION /by yyyy-MM-dd.");
         }
 
+        int byMarkerIndex = byMarker.start();
+        int byValueIndex = byMarker.end();
+        if (byMarker.find()) {
+            throw new SaceException("A deadline accepts only one /by parameter.");
+        }
+
         String description = command.substring("deadline".length(), byMarkerIndex).trim();
-        String by = command.substring(byMarkerIndex + " /by ".length()).trim();
+        String by = command.substring(byValueIndex).trim();
         if (description.isEmpty()) {
             throw new SaceException("Every deadline quest needs a description.");
         }
@@ -175,17 +197,35 @@ public class Parser {
      * Creates an event from a validated command.
      */
     private static Event parseEvent(String command) throws SaceException {
-        int fromMarkerIndex = command.indexOf(" /from ");
-        int toMarkerIndex = command.indexOf(" /to ");
+        Matcher fromMarker = EVENT_FROM_MARKER.matcher(command);
+        Matcher toMarker = EVENT_TO_MARKER.matcher(command);
+        int fromMarkerIndex = -1;
+        int fromValueIndex = -1;
+        int toMarkerIndex = -1;
+        int toValueIndex = -1;
+
+        if (fromMarker.find()) {
+            fromMarkerIndex = fromMarker.start();
+            fromValueIndex = fromMarker.end();
+            if (fromMarker.find()) {
+                throw new SaceException("An event accepts only one /from parameter.");
+            }
+        }
+        if (toMarker.find()) {
+            toMarkerIndex = toMarker.start();
+            toValueIndex = toMarker.end();
+            if (toMarker.find()) {
+                throw new SaceException("An event accepts only one /to parameter.");
+            }
+        }
         if (fromMarkerIndex < 0 || toMarkerIndex < 0 || toMarkerIndex <= fromMarkerIndex) {
             throw new SaceException(
                     "Use this formation: event DESCRIPTION /from START /to END.");
         }
 
         String description = command.substring("event".length(), fromMarkerIndex).trim();
-        String from = command.substring(
-                fromMarkerIndex + " /from ".length(), toMarkerIndex).trim();
-        String to = command.substring(toMarkerIndex + " /to ".length()).trim();
+        String from = command.substring(fromValueIndex, toMarkerIndex).trim();
+        String to = command.substring(toValueIndex).trim();
         if (description.isEmpty()) {
             throw new SaceException("Every event quest needs a description.");
         }
@@ -194,6 +234,9 @@ public class Parser {
         }
         if (to.isEmpty()) {
             throw new SaceException("An event needs an ending time after /to.");
+        }
+        if (from.equalsIgnoreCase(to)) {
+            throw new SaceException("An event must have different start and end times.");
         }
         return new Event(description, from, to);
     }

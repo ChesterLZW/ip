@@ -3,6 +3,8 @@ package sace;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -56,5 +58,17 @@ class SaceTest {
 
         assertTrue(response.contains("The battle rests for now"));
         assertTrue(sace.isExitRequested());
+    }
+
+    @Test
+    void getResponse_saveFailure_rollsBackAddedTask() throws IOException {
+        Path directoryUsedAsFile = Files.createDirectory(tempDir.resolve("archive"));
+        Sace sace = new Sace(directoryUsedAsFile);
+
+        String addResponse = sace.getResponse("todo prepare slides");
+        String listResponse = sace.getResponse("list");
+
+        assertTrue(addResponse.contains("could not save quests"));
+        assertTrue(listResponse.contains("No quests await you here."));
     }
 }
